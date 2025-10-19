@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Teks Aural Sastra - Cerita Nusantara</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #3a9a42 0%, #764ba2 100%);
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #718096;
+            margin-bottom: 20px;
+        }
+
+        .game-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .story-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+
+        .story-card.active {
+            border-color: #48bb78;
+            background: linear-gradient(45deg, #f0fff4, #e6fffa);
+        }
+
+        .story-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .story-description {
+            color: #718096;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .game-area.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .progress-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(45deg, #ffd89b 0%, #19547b 100%);
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .question-area {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .story-excerpt {
+            background: linear-gradient(45deg, #e6fffa, #f0fff4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #48bb78;
+            font-style: italic;
+            color: #2d3748;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            animation: bounce 0.6s ease;
+        }
+
+        .option-btn.wrong {
+            background: linear-gradient(45deg, #f56565, #e53e3e);
+            animation: shake 0.6s ease;
+        }
+
+        .feedback {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .feedback.correct {
+            color: #38a169;
+        }
+
+        .feedback.wrong {
+            color: #e53e3e;
+        }
+
+        .explanation {
+            background: #e6fffa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            border-left: 4px solid #4ecdc4;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #2d3748;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        }
+
+        .btn.secondary:hover {
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .concept-box {
+            background: linear-gradient(45deg, #fff5f5, #fed7d7);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #f56565;
+        }
+
+        .concept-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #c53030;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .concept-text {
+            color: #2d3748;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+
+
+        .score-display {
+            text-align: center;
+            background: linear-gradient(45deg, #ffd89b, #19547b);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .name-input-section {
+            margin-bottom: 30px;
+        }
+
+        .name-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: 3px solid #667eea;
+        }
+
+        .name-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .name-description {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .name-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #student-name {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            text-align: center;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        #student-name:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+        }
+
+        .start-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .welcome-message {
+            text-align: center;
+            background: linear-gradient(45deg, #f0fff4, #e6fffa);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #48bb78;
+        }
+
+        .welcome-message h3 {
+            color: #2d3748;
+            margin: 0 0 10px 0;
+            font-size: 1.4rem;
+        }
+
+        .welcome-message p {
+            color: #4a5568;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .emoji {
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .game-menu {
+                grid-template-columns: 1fr;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .name-form {
+                flex-direction: column;
+            }
+
+            #student-name {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎭 Petualangan Teks Aural Sastra 🎭</h1>
+            <p class="subtitle">Belajar tentang cerita yang didengar melalui dongeng Nusantara!</p>
+            
+            <div class="concept-box">
+                <div class="concept-title">
+                    <span class="emoji">📚</span>
+                    Apa itu Teks Aural Sastra?
+                </div>
+                <div class="concept-text">
+                    Teks aural sastra adalah cerita atau karya sastra yang kita dengar dengan telinga, bukan dibaca dengan mata. 
+                    Seperti dongeng yang diceritakan nenek, drama radio, atau pembacaan puisi. 
+                    Yang penting adalah bunyi, suara, dan cara berceritanya! 🎵
+                </div>
+            </div>
+        </div>
+
+        <div class="name-input-section" id="name-section">
+            <div class="name-card">
+                <div class="name-title">
+                    <span class="emoji">👋</span>
+                    Halo, Siswa Hebat!
+                </div>
+                <div class="name-description">
+                    Sebelum memulai petualangan belajar teks aural sastra, yuk kenalan dulu!
+                </div>
+                <div class="name-form">
+                    <input type="text" id="student-name" placeholder="Masukkan nama kamu di sini..." maxlength="30">
+                    <button class="start-btn" onclick="startGame()">
+                        🚀 Mulai Petualangan!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-menu" id="story-menu" style="display: none;">
+            <div class="welcome-message" id="welcome-message" style="display: none;">
+                <h3>🌟 Selamat datang, <span id="display-name"></span>! 🌟</h3>
+                <p>Pilih salah satu cerita rakyat di bawah ini untuk memulai pembelajaran!</p>
+            </div>
+            
+            <div class="story-card" onclick="selectStory('malin')">
+                <div class="story-title">
+                    <span class="emoji">🌊</span>
+                    Malin Kundang
+                </div>
+                <div class="story-description">
+                    Cerita tentang anak durhaka yang dikutuk menjadi batu. Mari pelajari bagaimana cerita ini disampaikan secara lisan!
+                </div>
+            </div>
+
+            <div class="story-card" onclick="selectStory('timun')">
+                <div class="story-title">
+                    <span class="emoji">🥒</span>
+                    Timun Mas & Buto Ijo
+                </div>
+                <div class="story-description">
+                    Petualangan gadis kecil melawan raksasa hijau. Dengarkan bagaimana cerita ini menegangkan saat dituturkan!
+                </div>
+            </div>
+
+            <div class="story-card" onclick="selectStory('bawang')">
+                <div class="story-title">
+                    <span class="emoji">🧅</span>
+                    Bawang Merah Bawang Putih
+                </div>
+                <div class="story-description">
+                    Kisah dua saudara tiri dengan sifat berbeda. Pelajari unsur-unsur teks aural dalam cerita ini!
+                </div>
+            </div>
+
+            <div class="story-card" onclick="selectStory('kancil')">
+                <div class="story-title">
+                    <span class="emoji">🐰</span>
+                    Si Kancil dan Buaya
+                </div>
+                <div class="story-description">
+                    Kancil yang cerdik mengakali buaya-buaya di sungai. Mari analisis ciri-ciri teks aural dari cerita ini!
+                </div>
+            </div>
+        </div>
+
+        <div class="game-area" id="game-area">
+            <div class="progress-section">
+                <div>
+                    <span class="emoji">⭐</span>
+                    <span>Skor: <span id="score">0</span></span>
+                </div>
+                <div>
+                    <span class="emoji">📖</span>
+                    <span>Soal: <span id="current-question">1</span>/5</span>
+                </div>
+                <div>
+                    <span class="emoji">🎯</span>
+                    <span>Cerita: <span id="current-story">-</span></span>
+                </div>
+            </div>
+
+            <div class="question-area">
+                <div class="question-text" id="question-text">
+                    Pilih cerita terlebih dahulu untuk memulai petualangan!
+                </div>
+                
+                <div class="story-excerpt" id="story-excerpt" style="display: none;">
+                    <!-- Story excerpt will be inserted here -->
+                </div>
+
+
+            </div>
+
+            <div class="options-grid" id="options-grid">
+                <!-- Options will be inserted here -->
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="controls">
+                <button class="btn" onclick="nextQuestion()" id="next-btn" style="display: none;">
+                    Soal Berikutnya 🎲
+                </button>
+                <button class="btn secondary" onclick="backToMenu()">
+                    Pilih Cerita Lain 📚
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStory = '';
+        let currentQuestion = 1;
+        let score = 0;
+        let answered = false;
+        let totalQuestions = 5;
+
+        function startGame() {
+            const nameInput = document.getElementById('student-name');
+            const studentName = nameInput.value.trim();
+            
+            if (studentName === '') {
+                nameInput.style.borderColor = '#f56565';
+                nameInput.placeholder = 'Nama tidak boleh kosong!';
+                nameInput.focus();
+                return;
+            }
+            
+            // Simpan nama siswa
+            localStorage.setItem('studentName', studentName);
+            
+            // Sembunyikan form nama dan tampilkan menu cerita
+            document.getElementById('name-section').style.display = 'none';
+            document.getElementById('story-menu').style.display = 'grid';
+            document.getElementById('welcome-message').style.display = 'block';
+            document.getElementById('display-name').textContent = studentName;
+        }
+
+        // Event listener untuk Enter key pada input nama
+        document.addEventListener('DOMContentLoaded', function() {
+            const nameInput = document.getElementById('student-name');
+            nameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    startGame();
+                }
+            });
+            
+            // Reset border color saat mengetik
+            nameInput.addEventListener('input', function() {
+                this.style.borderColor = '#e2e8f0';
+                this.placeholder = 'Masukkan nama kamu di sini...';
+            });
+        });
+
+        const stories = {
+            malin: {
+                title: "Malin Kundang",
+                questions: [
+                    {
+                        text: "Apa yang membuat cerita Malin Kundang termasuk teks aural sastra?",
+                        excerpt: "Dahulu kala, di pesisir Sumatra Barat, hiduplah seorang janda miskin bernama Mande Rubayah bersama anaknya, Malin Kundang...",
+                        options: [
+                            "Karena cerita ini ditulis di buku",
+                            "Karena cerita ini disampaikan secara lisan turun-temurun",
+                            "Karena cerita ini ada gambarnya",
+                            "Karena cerita ini pendek"
+                        ],
+                        correct: 1,
+                        explanation: "Benar! Cerita Malin Kundang adalah teks aural sastra karena disampaikan secara lisan dari generasi ke generasi, bukan dibaca dari tulisan."
+                    },
+                    {
+                        text: "Unsur apa yang paling penting dalam penyampaian cerita Malin Kundang secara aural?",
+                        excerpt: "Mande Rubayah berteriak dengan suara gemetar: 'Malin! Anakku! Mengapa kau tidak mengakui ibumu sendiri?'",
+                        options: [
+                            "Intonasi dan ekspresi suara",
+                            "Tulisan yang rapi",
+                            "Gambar ilustrasi",
+                            "Ukuran huruf"
+                        ],
+                        correct: 0,
+                        explanation: "Tepat! Intonasi dan ekspresi suara sangat penting untuk menyampaikan emosi dan perasaan tokoh dalam cerita aural."
+                    },
+                    {
+                        text: "Bagaimana cara teks aural menyampaikan suasana sedih saat Mande Rubayah ditolak anaknya?",
+                        excerpt: "Air mata Mande Rubayah mengalir deras. Dengan suara bergetar penuh kesedihan, ia berdoa...",
+                        options: [
+                            "Dengan tulisan tebal",
+                            "Dengan nada suara rendah dan tempo lambat",
+                            "Dengan huruf besar",
+                            "Dengan warna tulisan"
+                        ],
+                        correct: 1,
+                        explanation: "Benar! Teks aural menggunakan nada suara rendah dan tempo lambat untuk menyampaikan kesedihan dan emosi yang mendalam."
+                    },
+                    {
+                        text: "Apa tujuan utama cerita Malin Kundang sebagai teks aural sastra?",
+                        excerpt: "Dan jadilah Malin Kundang batu hingga sekarang, sebagai peringatan bagi anak-anak yang durhaka...",
+                        options: [
+                            "Hanya untuk menghibur",
+                            "Menyampaikan nilai moral tentang berbakti kepada orang tua",
+                            "Menakut-nakuti anak-anak",
+                            "Memamerkan kekayaan bahasa"
+                        ],
+                        correct: 1,
+                        explanation: "Tepat! Tujuan utama cerita ini adalah menyampaikan nilai moral tentang pentingnya berbakti kepada orang tua melalui penyampaian lisan yang berkesan."
+                    },
+                    {
+                        text: "Mengapa cerita rakyat seperti Malin Kundang cocok sebagai teks aural sastra?",
+                        excerpt: "Cerita ini telah dituturkan dari mulut ke mulut selama ratusan tahun di masyarakat Minangkabau...",
+                        options: [
+                            "Karena mudah dihafal",
+                            "Karena mengandung nilai budaya dan dapat hidup melalui suara pencerita",
+                            "Karena ceritanya pendek",
+                            "Karena tokohnya sedikit"
+                        ],
+                        correct: 1,
+                        explanation: "Benar! Cerita rakyat cocok sebagai teks aural karena mengandung nilai budaya yang dapat dihidupkan melalui suara, intonasi, dan cara bercerita yang menarik."
+                    }
+                ]
+            },
+            timun: {
+                title: "Timun Mas & Buto Ijo",
+                questions: [
+                    {
+                        text: "Bagaimana teks aural menyampaikan ketegangan saat Buto Ijo mengejar Timun Mas?",
+                        excerpt: "DUAARRR! DUAARRR! Langkah kaki Buto Ijo menggelegar memecah keheningan hutan...",
+                        options: [
+                            "Dengan huruf kapital",
+                            "Dengan tempo cepat dan suara keras yang meniru langkah raksasa",
+                            "Dengan gambar yang menakutkan",
+                            "Dengan warna tulisan merah"
+                        ],
+                        correct: 1,
+                        explanation: "Tepat! Teks aural menggunakan tempo cepat, suara keras, dan efek suara untuk menciptakan suasana tegang dan menakutkan."
+                    },
+                    {
+                        text: "Apa ciri khas teks aural yang terlihat dalam cerita Timun Mas?",
+                        excerpt: "Timun Mas berlari sekuat tenaga sambil berteriak: 'Tolong! Tolong! Ada raksasa mengejarku!'",
+                        options: [
+                            "Ada dialog dan ekspresi emosi yang kuat",
+                            "Menggunakan bahasa formal",
+                            "Tidak ada suara sama sekali",
+                            "Hanya berisi narasi panjang"
+                        ],
+                        correct: 0,
+                        explanation: "Benar! Teks aural sastra memiliki ciri dialog yang hidup dan ekspresi emosi yang kuat untuk melibatkan pendengar."
+                    },
+                    {
+                        text: "Bagaimana pencerita menyampaikan keajaiban biji-bijian Timun Mas dalam teks aural?",
+                        excerpt: "Timun Mas melempar biji mentimun... SYUUUUT! Tiba-tiba muncul hutan mentimun yang lebat!",
+                        options: [
+                            "Dengan deskripsi panjang",
+                            "Dengan efek suara dan perubahan nada yang menunjukkan keajaiban",
+                            "Dengan berbisik pelan",
+                            "Dengan nada datar"
+                        ],
+                        correct: 1,
+                        explanation: "Tepat! Teks aural menggunakan efek suara dan perubahan nada untuk menggambarkan keajaiban dan hal-hal supernatural."
+                    },
+                    {
+                        text: "Mengapa cerita Timun Mas efektif sebagai teks aural sastra?",
+                        excerpt: "Anak-anak duduk melingkar, mata berbinar mendengar petualangan Timun Mas yang menegangkan...",
+                        options: [
+                            "Karena ada banyak aksi dan ketegangan yang bisa dihidupkan dengan suara",
+                            "Karena ceritanya sangat panjang",
+                            "Karena tokohnya banyak",
+                            "Karena ada gambar"
+                        ],
+                        correct: 0,
+                        explanation: "Benar! Cerita dengan banyak aksi dan ketegangan sangat cocok untuk teks aural karena dapat dihidupkan dengan variasi suara dan tempo."
+                    },
+                    {
+                        text: "Apa fungsi pengulangan suara dalam cerita Timun Mas?",
+                        excerpt: "DUARR! DUARR! DUARR! Buto Ijo terus mengejar... TAP! TAP! TAP! Timun Mas berlari...",
+                        options: [
+                            "Untuk membuat cerita lebih panjang",
+                            "Untuk menciptakan ritme dan memperkuat suasana",
+                            "Untuk mengisi waktu",
+                            "Untuk membingungkan pendengar"
+                        ],
+                        correct: 1,
+                        explanation: "Tepat! Pengulangan suara dalam teks aural berfungsi menciptakan ritme dan memperkuat suasana cerita agar lebih berkesan."
+                    }
+                ]
+            },
+            bawang: {
+                title: "Bawang Merah Bawang Putih",
+                questions: [
+                    {
+                        text: "Bagaimana teks aural membedakan karakter Bawang Merah dan Bawang Putih?",
+                        excerpt: "Bawang Putih berkata dengan lembut: 'Baik, Ibu.' Sementara Bawang Merah membentak: 'Aku tidak mau!'",
+                        options: [
+                            "Dengan warna suara dan intonasi yang berbeda",
+                            "Dengan tulisan yang berbeda",
+                            "Dengan volume yang sama",
+                            "Dengan bahasa yang sulit"
+                        ],
+                        correct: 0,
+                        explanation: "Benar! Teks aural menggunakan warna suara dan intonasi berbeda untuk menggambarkan karakter - lembut untuk Bawang Putih, kasar untuk Bawang Merah."
+                    },
+                    {
+                        text: "Apa unsur teks aural yang membuat pendengar ikut merasakan kesedihan Bawang Putih?",
+                        excerpt: "Bawang Putih menangis tersedu-sedu di sumur, suaranya bergetar penuh kesedihan...",
+                        options: [
+                            "Ekspresi suara yang menyentuh hati",
+                            "Cerita yang panjang",
+                            "Bahasa yang sulit",
+                            "Tidak ada musik"
+                        ],
+                        correct: 0,
+                        explanation: "Tepat! Ekspresi suara yang menyentuh hati dalam teks aural dapat membuat pendengar ikut merasakan emosi tokoh."
+                    },
+                    {
+                        text: "Bagaimana pencerita menyampaikan keajaiban dalam cerita ini secara aural?",
+                        excerpt: "Tiba-tiba... BLING! Muncul nenek peri dengan suara merdu: 'Anak manis, mengapa kau menangis?'",
+                        options: [
+                            "Dengan perubahan nada menjadi magis dan misterius",
+                            "Dengan berteriak keras",
+                            "Dengan berbisik terus",
+                            "Dengan nada datar"
+                        ],
+                        correct: 0,
+                        explanation: "Benar! Teks aural menggunakan perubahan nada menjadi magis dan misterius untuk menggambarkan hal-hal supernatural."
+                    },
+                    {
+                        text: "Mengapa dialog penting dalam teks aural sastra seperti cerita ini?",
+                        excerpt: "'Pilihlah, nak. Labu besar atau labu kecil?' tanya nenek peri dengan suara bijaksana.",
+                        options: [
+                            "Dialog membuat cerita hidup dan interaktif",
+                            "Dialog membuat cerita lebih pendek",
+                            "Dialog tidak penting",
+                            "Dialog hanya untuk hiasan"
+                        ],
+                        correct: 0,
+                        explanation: "Tepat! Dialog dalam teks aural membuat cerita menjadi hidup, interaktif, dan membantu pendengar memahami karakter tokoh."
+                    },
+                    {
+                        text: "Apa pesan moral yang disampaikan melalui teks aural dalam cerita ini?",
+                        excerpt: "Dan sejak itu, Bawang Putih hidup bahagia karena kebaikan hatinya, sementara Bawang Merah menyesal...",
+                        options: [
+                            "Kebaikan akan mendapat balasan kebaikan",
+                            "Kecantikan adalah segalanya",
+                            "Uang adalah yang terpenting",
+                            "Tidak ada pesan khusus"
+                        ],
+                        correct: 0,
+                        explanation: "Benar! Teks aural sastra menyampaikan pesan moral bahwa kebaikan akan mendapat balasan kebaikan melalui cara bercerita yang berkesan."
+                    }
+                ]
+            },
+            kancil: {
+                title: "Si Kancil dan Buaya",
+                questions: [
+                    {
+                        text: "Bagaimana teks aural menggambarkan kecerdikan Si Kancil?",
+                        excerpt: "Si Kancil berkata dengan nada cerdik: 'Waah, kalian pasti banyak sekali! Coba berbaris agar aku bisa menghitung!'",
+                        options: [
+                            "Dengan nada suara yang cerdik dan penuh tipu muslihat",
+                            "Dengan berteriak keras",
+                            "Dengan berbisik pelan",
+                            "Dengan nada sedih"
+                        ],
+                        correct: 0,
+                        explanation: "Tepat! Teks aural menggunakan nada suara yang cerdik dan penuh tipu muslihat untuk menggambarkan karakter Kancil yang pintar."
+                    },
+                    {
+                        text: "Apa ciri teks aural yang membuat cerita Si Kancil menarik untuk didengar?",
+                        excerpt: "BYUR! BYUR! Suara buaya-buaya bermunculan dari air... 'Hei Kancil! Mau ke mana?' geram mereka.",
+                        options: [
+                            "Ada efek suara dan dialog yang hidup",
+                            "Menggunakan bahasa yang sulit",
+                            "Ceritanya sangat panjang",
+                            "Tidak ada suara sama sekali"
+                        ],
+                        correct: 0,
+                        explanation: "Benar! Teks aural yang menarik memiliki efek suara dan dialog yang hidup untuk melibatkan pendengar dalam cerita."
+                    },
+                    {
+                        text: "Bagaimana pencerita menyampaikan suasana tegang saat Kancil hampir ketahuan?",
+                        excerpt: "Buaya terbesar mulai curiga... suaranya menggelegar: 'Tunggu dulu, Kancil! Sepertinya kau menipu kami!'",
+                        options: [
+                            "Dengan tempo yang melambat dan nada yang mencurigakan",
+                            "Dengan berteriak terus",
+                            "Dengan tertawa",
+                            "Dengan nada gembira"
+                        ],
+                        correct: 0,
+                        explanation: "Tepat! Teks aural menggunakan tempo yang melambat dan nada mencurigakan untuk membangun ketegangan dalam cerita."
+                    },
+                    {
+                        text: "Mengapa cerita binatang seperti Si Kancil cocok untuk teks aural sastra?",
+                        excerpt: "Anak-anak tertawa gembira mendengar kelicikan Kancil dan kebodohan buaya-buaya...",
+                        options: [
+                            "Karena bisa menggunakan suara-suara binatang yang lucu dan menarik",
+                            "Karena binatang tidak bisa bicara",
+                            "Karena ceritanya selalu sedih",
+                            "Karena tidak ada pesan moral"
+                        ],
+                        correct: 0,
+                        explanation: "Benar! Cerita binatang cocok untuk teks aural karena pencerita bisa menggunakan suara-suara binatang yang lucu dan menarik untuk menghibur pendengar."
+                    },
+                    {
+                        text: "Apa fungsi humor dalam teks aural cerita Si Kancil?",
+                        excerpt: "HOP! HOP! HOP! Si Kancil melompat cepat di atas punggung buaya sambil tertawa: 'Terima kasih jembatan hidup!'",
+                        options: [
+                            "Membuat pendengar terhibur dan cerita lebih berkesan",
+                            "Membuat cerita membosankan",
+                            "Tidak ada fungsinya",
+                            "Membuat pendengar bingung"
+                        ],
+                        correct: 0,
+                        explanation: "Tepat! Humor dalam teks aural berfungsi menghibur pendengar dan membuat cerita lebih berkesan serta mudah diingat."
+                    }
+                ]
+            }
+        };
+
+        function selectStory(storyKey) {
+            currentStory = storyKey;
+            currentQuestion = 1;
+            score = 0;
+            answered = false;
+
+            // Update UI
+            document.querySelectorAll('.story-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.story-card').classList.add('active');
+
+            document.getElementById('current-story').textContent = stories[storyKey].title;
+            document.getElementById('current-question').textContent = '1';
+            document.getElementById('score').textContent = '0';
+
+            // Show game area
+            document.getElementById('game-area').classList.add('active');
+            
+            // Load first question
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (!currentStory || currentQuestion > totalQuestions) return;
+
+            const story = stories[currentStory];
+            const question = story.questions[currentQuestion - 1];
+
+            document.getElementById('question-text').textContent = question.text;
+            
+            // Show story excerpt
+            const excerptDiv = document.getElementById('story-excerpt');
+            excerptDiv.style.display = 'block';
+            excerptDiv.innerHTML = `<strong>Kutipan cerita:</strong><br>"${question.excerpt}"`;
+
+
+
+            // Load options
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index, question.correct, question.explanation);
+                optionsGrid.appendChild(button);
+            });
+
+            // Reset feedback
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('next-btn').style.display = 'none';
+            answered = false;
+        }
+
+        function checkAnswer(selectedIndex, correctIndex, explanation) {
+            if (answered) return;
+            answered = true;
+
+            const optionButtons = document.querySelectorAll('.option-btn');
+            const feedback = document.getElementById('feedback');
+
+            // Disable all buttons
+            optionButtons.forEach(btn => btn.style.pointerEvents = 'none');
+
+            if (selectedIndex === correctIndex) {
+                score += 20;
+                optionButtons[selectedIndex].classList.add('correct');
+                feedback.innerHTML = `
+                    <div class="correct">🎉 Benar! Hebat sekali! 🎉</div>
+                    <div class="explanation">${explanation}</div>
+                `;
+            } else {
+                optionButtons[selectedIndex].classList.add('wrong');
+                optionButtons[correctIndex].classList.add('correct');
+                feedback.innerHTML = `
+                    <div class="wrong">❌ Belum tepat. Mari belajar lagi! 💪</div>
+                    <div class="explanation">${explanation}</div>
+                `;
+            }
+
+            // Update score
+            document.getElementById('score').textContent = score;
+            
+            // Show next button
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            if (currentQuestion >= totalQuestions) {
+                showFinalScore();
+                return;
+            }
+
+            currentQuestion++;
+            document.getElementById('current-question').textContent = currentQuestion;
+            
+            // Re-enable buttons
+            setTimeout(() => {
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.style.pointerEvents = 'auto';
+                    btn.classList.remove('correct', 'wrong');
+                });
+                loadQuestion();
+            }, 100);
+        }
+
+        function showFinalScore() {
+            const percentage = (score / 100) * 100;
+            const studentName = localStorage.getItem('studentName') || 'Siswa';
+            let message = '';
+            
+            if (percentage >= 80) {
+                message = `🏆 Selamat ${studentName}! Kamu luar biasa! Sudah memahami teks aural sastra dengan sangat baik! 🏆`;
+            } else if (percentage >= 60) {
+                message = `👍 Selamat ${studentName}! Bagus sekali! Terus semangat belajar tentang teks aural sastra ya! 👍`;
+            } else {
+                message = `💪 Semangat ${studentName}! Jangan menyerah! Ayo pelajari lagi cerita-cerita lainnya! 💪`;
+            }
+
+            document.getElementById('feedback').innerHTML = `
+                <div class="score-display">
+                    <div style="font-size: 1.4rem; margin-bottom: 20px; line-height: 1.4;">${message}</div>
+                    <div style="font-size: 1.3rem; margin-bottom: 10px;">📊 Skor Akhir: ${score}/100 (${percentage}%)</div>
+                    <div style="margin-top: 15px; font-size: 1rem; opacity: 0.9;">
+                        📖 Cerita: ${stories[currentStory].title}
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+                        🎓 Siswa: ${studentName}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+
+
+        function backToMenu() {
+            document.getElementById('game-area').classList.remove('active');
+            document.querySelectorAll('.story-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            currentStory = '';
+            currentQuestion = 1;
+            score = 0;
+            
+            // Tampilkan kembali menu cerita (bukan form nama)
+            document.getElementById('story-menu').style.display = 'grid';
+            document.getElementById('welcome-message').style.display = 'block';
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e96301164064ad',t:'MTc2MDQ2OTEzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
